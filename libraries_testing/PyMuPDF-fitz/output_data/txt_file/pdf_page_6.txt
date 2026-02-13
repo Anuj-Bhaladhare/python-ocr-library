@@ -1,0 +1,57 @@
+232
+Research Methods
+conclusions.  According to Yin (1994), the research design in case study contains the
+following component parts:
+1)
+A study’s questions in terms of who, what, where, how and why;
+These components are argued to provide a clue to the type of research strategy,
+which can be used in case study research.
+2)
+Its propositions, (if any);
+Study propositions help to direct research attention to matters that ought to be
+examined closely.  This will guide the research in the right direction by providing
+further dues to what data to collect and from where data may be obtained.
+3)
+Its unit of analysis;
+This helps to define what the ‘case’ is and further focuses on a precise research
+question.
+4)
+The logic linking of data to the propositions ‘pattern-matching approach’; and
+This is used for case study.  This approach helps in putting together several
+pieces of information from the same case and relating to the some theoretical
+proposition.
+5)
+The criteria for interpreting the findings;
+There is no precise way of interpreting case study findings.  Certain type of data
+in a case, such as statistical data, may be tested for its validity or variance.
+Other quantitative data such as independent and dependent variables may be
+analysed for their relationship.  While time series data may be analysed for its
+trend  quantitative data however, may require contextually innovative ideas for
+interpreting it.  The nature of relationship between data such as ‘positive’ and
+‘negative’ perhaps in one criterion and another would probably be in terms of
+its effects on the other such as sequential, circular, constant and temporal.
+For the purpose of data collection and analysis Yin proposes two alternative strategies
+namely the strategy of relying on theoretical propositions and the strategy for developing
+a case description.  The final part of the process is to prepare the report as the end
+product of the research.  Thus produced report depicts the picture to the audiences
+or readers the contributions of the researcher to the field.
+14.4.1
+Selection of an Object for a Case Study: Essential Precautions
+It is known that, a case refers to a unit of study.  Unit is understood to be a family
+or social group, a class of persons, a set of relationships or processes.  There are
+some essential precautions to be taken while choosing the object for case study:
+
+Selection of typical and representative unit;
+
+Identification of situations and problems;
+
+Time to be covered-the phase of life cycle;
+
+Unitary character of the unit-breadth of data, levels of data, use of indices and
+types;
+
+Quality of data;
+
+Availability of data and its reliability;
+
+Cost to be incurred;

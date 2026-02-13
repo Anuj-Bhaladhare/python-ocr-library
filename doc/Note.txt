@@ -1,0 +1,9 @@
+To Do Task:
+1) Py Auto GUI
+2) Get Layout Structure from PDF by using the fizt lib.
+3) https://www.youtube.com/watch?v=qYSWWGz9Z6s
+
+
+
+
+

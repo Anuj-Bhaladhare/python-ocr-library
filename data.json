@@ -1,0 +1,25 @@
+{
+   "document_type":"form",
+   "ocr_text":"Pe UU a Cae\nEto amen ecru\na Niece acre rerneert te)\nCue eT Mer are tT\nName: SUROTTAM BHATTACHARYA\nClass 1 See. 8\nGuardian's Namo MR. SHAKTI BHATTACHARYA,\nad ‘Addéress. 18, NAVA DARSHAN,\na BIRAT, KOLKATA. 700 134\nBisse» Phone Resi) 2514 4283 Mobile 98903 09328\nHead Mistiess Blood Group AtVe Valid Upto 21.03.2011\n7 Se\n\\x0c",
+   "ocr_confidence":0.35,
+   "steps":[
+      {
+         "step":"doc_type_detection",
+         "executed":true,
+         "reason":"Detected as form",
+         "confidence":0.85
+      },
+      {
+         "step":"denoise",
+         "executed":false,
+         "reason":"Image sharp (Laplacian=2458.3)",
+         "confidence":0.95
+      },
+      {
+         "step":"threshold",
+         "executed":false,
+         "reason":"Good contrast (49.8)",
+         "confidence":0.9
+      }
+   ]
+}

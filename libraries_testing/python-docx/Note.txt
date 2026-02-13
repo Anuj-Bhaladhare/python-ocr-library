@@ -1,0 +1,5 @@
+1) When creating a table from a PDF, we first count the table rows. Then we create a table with the same number of rows.
+
+
+
+

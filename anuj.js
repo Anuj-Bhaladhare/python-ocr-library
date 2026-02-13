@@ -1,2 +1,0 @@
-anuj = "anuj"
-
