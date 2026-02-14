@@ -66,50 +66,50 @@ doc = fitz.open(pdf_path)
 # Select the page (e. g. first page)
 page = doc[0]
 
-# # --------------> Draw rectangle around each word <--------------
-# # Extract words with coordinates
-# words = page.get_text("words")
+# --------------> Draw rectangle around each word <--------------
+# Extract words with coordinates
+words = page.get_text("words")
 
-# # Create New Object of word and bonding box
-# word_object = []
-# for word in words:
-#     x0, y0, x1, y1 = word[:4]
+# Create New Object of word and bonding box
+word_object = []
+for word in words:
+    x0, y0, x1, y1 = word[:4]
 
-#     word_object.append({
-#         "text": word[4],
-#         "bbox": [x0, y0, x1, y1]
-#     })
+    word_object.append({
+        "text": word[4],
+        "bbox": [x0, y0, x1, y1]
+    })
 
-# # Create Bounding Box for Specific Word
-# word_input_for_box = input(
-#     "Enter Your Word to Create Bounding Box (if available in PDF): \n"
-# )
+# Create Bounding Box for Specific Word
+word_input_for_box = input(
+    "Enter Your Word to Create Bounding Box (if available in PDF): \n"
+)
 
-# word_flag = False
+word_flag = False
 
-# for w_obj in word_object:
-#     if w_obj["text"] == word_input_for_box:
-#         w_x0, w_y0, w_x1, w_y1 = w_obj["bbox"]
+for w_obj in word_object:
+    if w_obj["text"] == word_input_for_box:
+        w_x0, w_y0, w_x1, w_y1 = w_obj["bbox"]
 
-#         rect = fitz.Rect(w_x0, w_y0, w_x1, w_y1)
+        rect = fitz.Rect(w_x0, w_y0, w_x1, w_y1)
 
-#         page.draw_rect(
-#             rect, 
-#             color=(0, 1, 0), 
-#             width=0.5   # Green Box
-#         )
-#         word_flag = True
-
-
-# # Print only once after loop
-# if word_flag == True:
-#     print("Bonding Box Created Successfully...!")
-# else:
-#     print("Your Word NOT Found...!")
+        page.draw_rect(
+            rect, 
+            color=(0, 1, 0), 
+            width=0.5   # Green Box
+        )
+        word_flag = True
 
 
-# # Save the new PDF
-# doc.save("./output_data/pdf_file/world_level_bounding_box.pdf")
+# Print only once after loop
+if word_flag == True:
+    print("Bonding Box Created Successfully...!")
+else:
+    print("Your Word NOT Found...!")
+
+
+# Save the new PDF
+doc.save("./output_data/pdf_file/world_level_bounding_box.pdf")
 
 
 # # --------------> Draw rectangle around Text Blocks <--------------
@@ -178,16 +178,3 @@ page = doc[0]
 
 # print("Bonding boxex added successfully!")
 
-
-import fitz     # PyMuPDF
-import os       # Operating System
-
-pdf_path = "./pdf_data/orignal_bill_ifss.pdf"
-# open the PDF
-doc = fitz.open(pdf_path)
-
-# Select the page (e. g. first page)
-page = doc[0]
-
-page_text = page.get_text("text")
-print(page_text)
