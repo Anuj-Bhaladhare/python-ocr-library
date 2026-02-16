@@ -22,9 +22,9 @@ pix.save("./output_data/image_file/ifss_orignal_bill.png")
 image = np.frombuffer(pix.samples, dtype=np.uint8)
 image = image.reshape(pix.height, pix.width, pix.n)
 
-# ====================================================
-# ==================: Pre-Process :===================
-# ====================================================
+# =======================================================
+# ==================: Pre-Processing :===================
+# =======================================================
 
 # Convert to OpenCV BGR format
 if pix.n == 4:
@@ -117,6 +117,7 @@ for i in range(n):
             "bbox": [x, y, w, h]
         })
 
+print(f"=======> words <========= {words}")
 # ==============: Draw Bonding Box on PDF in Selected Text:==============
 scale = 72 / 300  # Convert image coords back to PDF coords
 word_flag = False
