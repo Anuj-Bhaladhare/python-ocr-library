@@ -1,0 +1,75 @@
+Chapter 3 - Ad-Hoc Commands
+27
+$ ansible multi -a "free -m"
+192.168.56.4 | CHANGED | rc=0 >>
+total
+used
+free
+shared
+buff/cache
+available
+Mem:
+486
+98
+283
+4
+104
+371
+Swap:
+1023
+0
+1023
+192.168.56.5 | CHANGED | rc=0 >>
+total
+used
+free
+shared
+buff/cache
+available
+Mem:
+486
+96
+285
+4
+104
+372
+Swap:
+1023
+0
+1023
+192.168.56.6 | CHANGED | rc=0 >>
+total
+used
+free
+shared
+buff/cache
+available
+Mem:
+486
+97
+284
+4
+104
+371
+Swap:
+1023
+0
+1023
+Memory is pretty tight, but since we’re running three VMs on our localhost, we need
+to be a little conservative.
+Third, let’s make sure the date and time on each server is in sync:
+$ ansible multi -a "date"
+192.168.56.5 | CHANGED | rc=0 >>
+Sat Feb
+1 20:23:08 UTC 2021
+192.168.56.4 | CHANGED | rc=0 >>
+Sat Feb
+1 20:23:08 UTC 2021
+192.168.56.6 | CHANGED | rc=0 >>
+Sat Feb
+1 20:23:08 UTC 2021
+Most applications are written with slight tolerances for per-server time jitter, but it’s
+always a good idea to make sure the times on the different servers are as close as
+possible, and the simplest way to do that is to use the Network Time Protocol, which
+is easy enough to configure. We’ll do that next, using Ansible’s modules to make the
+process painless.
