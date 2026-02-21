@@ -40,7 +40,7 @@ output_path = "./output/word-level-engineering.pdf"
 # 3. Open Document
 # ---------------------------------------------------------
 doc = fitz.open(file_path)
-page = doc[15]     # Assume invoice on first page
+page = doc[38]     # Assume invoice on first page
 
 
 
@@ -106,9 +106,9 @@ def extract_value_near_keyword(keyword_list):
 # -----------------------------------------------------------------
 # 6. Extract Invoice Fields
 # -----------------------------------------------------------------
-invoice_number = extract_value_near_keyword(["invoice", "invoice no", "inv"])
-date_value = extract_value_near_keyword(["date"])
-total_amount = extract_value_near_keyword(["total", "amount"])
+invoice_number = extract_value_near_keyword(["invoice", "invoice no", "Ansible"])
+date_value = extract_value_near_keyword(["date", "marker"])
+total_amount = extract_value_near_keyword(["total", "amount", "Make"])
 
 
 

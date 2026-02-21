@@ -30,7 +30,7 @@ output_path = "./output/font-level-engineering.pdf"
 # 3️⃣ Open Document
 # ------------------------------------------------------------
 doc = fitz.open(file_path)
-page = doc[15]  # First page for demo
+page = doc[36]  # First page for demo
 
 
 
