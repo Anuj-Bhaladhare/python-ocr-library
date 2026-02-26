@@ -308,8 +308,8 @@ average_font_size, heading_threshold = Extract_Structured_Layout(page)
 
 import re
 
-target_number = "3."
-target_keyword = "Complete"
+target_number = "1."
+target_keyword = "Clear"
 
 comment_text = "📌 Please review this section carefully. - ANUJ"
 
