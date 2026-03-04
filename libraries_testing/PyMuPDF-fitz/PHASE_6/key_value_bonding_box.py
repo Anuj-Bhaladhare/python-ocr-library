@@ -1,188 +1,276 @@
-# --------------------------------------------------------------------
-# |                                                                  |
-# |         Properlly Working Code for Single Word KEY               |
-# |                                                                  |
-# --------------------------------------------------------------------
-
 """
-    => Word-Level Engineering
-        - Keyword search using coordinates
-        - Extract values near keywords
-        - Build invoice field extractor
+================================================================
+LINE-LEVEL TEXT EXTRACTION + BOUNDING BOX DRAWING
+================================================================
 
-        👉 Practice: Extract:
-            - Invoice number
-            - Date
-            - Total amount
+This script demonstrates:
 
-    ==========================================
-    1️⃣ Get word-level data (page.get_text("words"))
-    2️⃣ Convert into structured format
-    3️⃣ Search for keywords
-    4️⃣ Look for words to the RIGHT of keyword (same line)
-    5️⃣ Extract probable value
-    6️⃣ Draw bounding boxes for visualization
-    ==========================================
-""" 
+1. Extracting full line text from a PDF
+2. Storing line text and bounding boxes in structured format
+3. Drawing rectangles around each text line
+4. Saving the modified PDF properly
 
-# ---------------------------------------------------------
-# 1. Import Required Librares
-# ---------------------------------------------------------
-import fitz
+Author: ANUJ
+"""
+
 import os
-import re
+import fitz  # PyMuPDF
 
 
+# ==============================================================
+# CONFIGURATION
+# ==============================================================
 
-# ---------------------------------------------------------
-# 2. Initialize File Path
-# ---------------------------------------------------------
-file_path = "./input/ifss_orignal_bill.pdf"
-output_path = "./output/key_value_bonding_box.pdf"
-
-
-# ---------------------------------------------------------
-# 3. Open Document
-# ---------------------------------------------------------
-doc = fitz.open(file_path)
-page = doc[0]     # Assume invoice on first page
+INPUT_PDF = "./input/ifss_orignal_bill.pdf"
+OUTPUT_PDF = "./output/key_value_exact_bbox.pdf"
 
 
+# ==============================================================
+# FUNCTION: Extract Line Data
+# ==============================================================
 
-# ---------------------------------------------------------
-# 4. Extract Word-Level Data
-# ---------------------------------------------------------
-words = page.get_text("words")
-
-# print(f"words => {words}")
-
-# Structure words into dictionaries for easier handling
-word_data = []
-
-for w in words:
-    x0, y0, x1, y1, text, block_no, line_no, word_no = w
-
-    word_data.append({
-        "text": text.strip(),
-        "bbox": fitz.Rect(x0, y0, x1, y1),
-        "block": block_no,
-        "line": line_no
-    })
-
-
-# print(f"word_data => {word_data}")
-
-
-def extract_key_values_with_bbox(user_keywords):
+def extract_line_data(page):
     """
-    Extract key-value pairs and their bounding boxes from PDF.
-    Returns list of dicts: key, value, key_bbox, value_bbox
+    Extract all text lines with their bounding boxes.
+
+    Returns:
+        List of dictionaries:
+        [
+            {
+                "text": "Full line text",
+                "bbox": (x0, y0, x1, y1)
+            }
+        ]
     """
 
-    results = []
+    line_text_blocks = []
 
-    # Group words by line
-    lines = {}
-    for w in word_data:
-        lines.setdefault(w["line"], []).append(w)
+    # Extract structured text dictionary
+    text_data = page.get_text("dict")
 
-    for line_no, line_words in lines.items():
-        # Sort left to right
-        line_words.sort(key=lambda w: w["bbox"].x0)
-        # Merge line text
-        full_line = " ".join([w["text"] for w in line_words])
-        # Normalize separators
-        normalized_line = re.sub(r'[:\.\-]+', ':', full_line)
+    for block in text_data["blocks"]:
 
-        for keyword in user_keywords:
+        # Process only text blocks
+        if block["type"] == 0:
 
-            # Regex to capture value
-            pattern = re.compile(
-                rf'({re.escape(keyword)})\s*:\s*([\S ]+?)(?=\s+[A-Z]|$)',
-                re.I
-            )
+            for line in block["lines"]:
 
-            match = pattern.search(normalized_line)
+                # Extract full line text by combining spans
+                line_text = ""
+                for span in line["spans"]:
+                    line_text += span["text"]
 
-            if match:
-                value_text = match.group(2).strip()
-                key_text = match.group(1).strip()
+                # Extract bounding box
+                x0, y0, x1, y1 = line["bbox"]
 
-                # Find words in line that belong to key
-                key_words = [w for w in line_words if key_text.lower() in w["text"].lower()]
-
-                # Find words in line that belong to value
-                value_words = []
-                # split value text into words
-                value_tokens = value_text.split()
-                idx = 0
-                for w in line_words:
-                    if idx < len(value_tokens) and w["text"].strip() == value_tokens[idx]:
-                        value_words.append(w)
-                        idx += 1
-
-                # Merge bounding boxes
-                if key_words:
-                    key_bbox = key_words[0]["bbox"]
-                    for w in key_words[1:]:
-                        key_bbox |= w["bbox"]  # union of rects
-                else:
-                    key_bbox = None
-
-                if value_words:
-                    value_bbox = value_words[0]["bbox"]
-                    for w in value_words[1:]:
-                        value_bbox |= w["bbox"]
-                else:
-                    value_bbox = None
-
-                results.append({
-                    "key": key_text,
-                    "value": value_text,
-                    "key_bbox": key_bbox,
-                    "value_bbox": value_bbox
+                # Store structured data
+                line_text_blocks.append({
+                    "text": line_text.strip(),
+                    "bbox": (x0, y0, x1, y1)
                 })
 
-    return results
-
-
-# -----------------------------------------------------------------
-# 6. Extract Invoice Fields
-# -----------------------------------------------------------------
-invoice_number = extract_key_values_with_bbox(["State", "Invoice Date"])
-# date_value = extract_value_near_keyword(["date", "marker"])
-# total_amount = extract_value_near_keyword(["total", "amount", "Make"])
-
-print(f"invoice_number => {invoice_number}")
-
-key_rect = invoice_number[0]["key_bbox"]
-value_rect = invoice_number[0]["value_bbox"]
-
-page.draw_rect(
-    key_rect,
-    color = (1, 0, 0),
-    width = 1
-)
-
-page.draw_rect(
-    value_rect,
-    color = (0, 1, 0),
-    width = 1
-)
-print("✅ Rectangle drawn.")
+    return line_text_blocks
 
 
 
-# ------------------------------------------------------------
-# 7️⃣ Save Output
-# ------------------------------------------------------------
-doc.save(output_path)
-doc.close()
+# ==============================================================
+# FUNCTION: Extract Value by Using Key
+# ==============================================================
 
-print("🎯 Drawing demo completed successfully.")
+# Find VALUE from list of array by using the KEY
+def find_value_from_lines(line_data, search_key):
+
+    for line in line_data:
+        text = line["text"]
+
+        if search_key.lower() in text.lower():
+            parts = text.split(":", 1)
+
+            if len(parts) > 1:
+                return parts[1].strip()
+
+    return None
+
+# Find VALUE from list of array by using the KEY | Advance KEY and VALUE Extractor
+def smart_key_value_extractor(line_data, search_key):
+    """
+    Try multiple extraction strategies:
+    1. Same-line colon split
+    2. Same-row neighbor
+    3. Below-row neighbor
+    """
+
+    # Step 1: Find key line
+    for line in line_data:
+        if search_key.lower() in line["text"].lower():
+
+            key_line = line
+            key_text = line["text"]
+
+            # --------------- Case 1: Colon Based ---------------
+            if ":" in key_text:
+                return key_text.split(":", 1)[1].strip()
+
+            # --------------- Case 2 & 3: Layout Based ---------------
+            key_x0, key_y0, key_x1, key_y1 = key_line["bbox"]
+
+            for candidate in line_data:
+                cx0, cy0, cx1, cy1 = candidate["bbox"]
+
+                # Same row (horizontal)
+                if abs(cy0 - key_y0) < 5 and cx0 > key_x1:
+                    return candidate["text"]
+
+                # Below row (vertical)
+                if 0 < (cy0 - key_y1) < 20:
+                    return candidate["text"]
+
+    return None
+
+# Find VALUE, KEY Bonding Box, VALUE Bonding Box by Using PAGE and KEY data
+def get_key_value_bbox(page, search_key):
+    """
+    Returns:
+        {
+            "key_bbox": (x0, y0, x1, y1),
+            "value_bbox": (x0, y0, x1, y1),
+            "value_text": "31-01-2026"
+        }
+    """
+
+    words = page.get_text("words")
+
+    # Group words by (block_no, line_no)
+    lines = {}
+
+    for w in words:
+        x0, y0, x1, y1, text, block_no, line_no, word_no = w
+        key = (block_no, line_no)
+
+        if key not in lines:
+            lines[key] = []
+
+        lines[key].append(w)
+
+    # Process each line
+    for line_words in lines.values():
+
+        # Sort words left to right
+        line_words.sort(key=lambda w: w[0])
+
+        full_line = " ".join([w[4] for w in line_words])
+
+        if search_key.lower() in full_line.lower():
+
+            key_words = []
+            value_words = []
+            colon_found = False
+
+            for w in line_words:
+                if ":" in w[4]:
+                    colon_found = True
+                    key_words.append(w)
+                elif not colon_found:
+                    key_words.append(w)
+                else:
+                    value_words.append(w)
+
+            # Combine bbox function
+            def combine_bbox(word_list):
+                x0 = min(w[0] for w in word_list)
+                y0 = min(w[1] for w in word_list)
+                x1 = max(w[2] for w in word_list)
+                y1 = max(w[3] for w in word_list)
+                return (x0, y0, x1, y1)
+
+            key_bbox = combine_bbox(key_words)
+            value_bbox = combine_bbox(value_words)
+
+            value_text = " ".join([w[4] for w in value_words])
+
+            return {
+                "key_bbox": key_bbox,
+                "value_bbox": value_bbox,
+                "value_text": value_text
+            }
+
+    return None
 
 
-first understand the function of extract_key_values_with_bbox -> IMP / Verry IMP
+
+# ==============================================================
+# FUNCTION: Draw Bounding Boxes
+# ==============================================================
+
+def draw_line_boxes(page, line_data):
+    """
+    Draw rectangles around extracted lines.
+    """
+
+    key_x0, key_y0, key_x1, key_y1 = line_data["key_bbox"]
+    key_rect = fitz.Rect(key_x0, key_y0, key_x1 - 2.5, key_y1)
+    page.draw_rect(
+        key_rect,
+        color=(1, 0, 0),  # RED color (RGB normalized)
+        width=0.5
+    )
+
+    value_x0, value_y0, value_x1, value_y1 = line_data["value_bbox"]
+    value_rect = fitz.Rect(value_x0, value_y0, value_x1, value_y1)
+    page.draw_rect(
+        value_rect,
+        color=(0, 1, 0),  # Green color (RGB normalized)
+        width=0.5
+    )
+
+
+# ==============================================================
+# MAIN EXECUTION
+# ==============================================================
+
+def main(search_key):
+
+    # Ensure output directory exists
+    os.makedirs(os.path.dirname(OUTPUT_PDF), exist_ok=True)
+
+    # Open document safely
+    with fitz.open(INPUT_PDF) as doc:
+
+        # Process only first page
+        page = doc[0]
+
+        # Step 1: Extract line data
+        line_data = extract_line_data(page)
+
+        # find_value_from = smart_key_value_extractor(line_data, search_key)
+        # print(f"{search_key} = {find_value_from}")
+
+        find_value_from = get_key_value_bbox(page, search_key)
+        print(f"{search_key} = {find_value_from}")
+
+        # Step 2: Draw bounding boxes
+        draw_line_boxes(page, find_value_from)
+
+        # Step 3: Save modified PDF
+        doc.save(
+            OUTPUT_PDF,
+            garbage=4,
+            deflate=True
+        )
+
+    print("Bounding boxes added successfully!")
+
+
+if __name__ == "__main__":
+
+    # Add Your KEY to find VALUE
+    search_key = "Bank Branch IFSC"
+
+    main(search_key)
+
+
+    
+
 
 
 
