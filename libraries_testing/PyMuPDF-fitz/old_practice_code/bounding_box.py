@@ -153,28 +153,28 @@ doc.save("./output_data/pdf_file/world_level_bounding_box.pdf")
 
 
 
-# # --------------> Draw rectangle around Text Line <--------------
-# # Extract Line Blocks with coordinates
-# text_blocks = page.get_text("dict")
+# --------------> Draw rectangle around Text Line <--------------
+# Extract Line Blocks with coordinates
+text_blocks = page.get_text("dict")
 
-# for block in text_blocks["blocks"]:
-#     if block["type"] == 0:
-#         for line in block["lines"]:
-#             x0, y0, x1, y1 = line["bbox"]
-#             # print(line["bbox"])
-#             # print(f"=============== \n x0 = {x0}, \n y0 = {y0}, \n x1 = {x1}, \n y1 = {y1} \n =============== ")
-#             rect = fitz.Rect(x0, y0, x1, y1)
-#             page.draw_rect(
-#                 rect, 
-#                 color=(0, 1, 0), 
-#                 width=0.5   # Green Box
-#             )
-#         # Save the new PDF
-#         doc.save("./output_data/pdf_file/line_level_bounding_box.pdf")
+for block in text_blocks["blocks"]:
+    if block["type"] == 0:
+        for line in block["lines"]:
+            x0, y0, x1, y1 = line["bbox"]
+            # print(line["bbox"])
+            # print(f"=============== \n x0 = {x0}, \n y0 = {y0}, \n x1 = {x1}, \n y1 = {y1} \n =============== ")
+            rect = fitz.Rect(x0, y0, x1, y1)
+            page.draw_rect(
+                rect, 
+                color=(0, 1, 0), 
+                width=0.5   # Green Box
+            )
+        # Save the new PDF
+        doc.save("./output_data/pdf_file/line_level_bounding_box.pdf")
 
 
-# # Closed Document
-# doc.close()
+# Closed Document
+doc.close()
 
-# print("Bonding boxex added successfully!")
+print("Bonding boxex added successfully!")
 
